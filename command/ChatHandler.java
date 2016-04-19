@@ -11,10 +11,12 @@ public class ChatHandler extends Thread {
     protected DataInputStream inStream;
     protected DataOutputStream outStream;
     protected boolean isOn;
+    protected Integer numberClient;
 
     protected static List<ChatHandler> handlers = Collections.synchronizedList(new ArrayList<ChatHandler>());
 
-    public ChatHandler(Socket s) throws IOException {
+    public ChatHandler(Socket s, Integer nc) throws IOException {
+        numberClient = nc;
         socket = s;
         inStream = new DataInputStream(new BufferedInputStream(s.getInputStream()));
         outStream = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
@@ -24,6 +26,7 @@ public class ChatHandler extends Thread {
         isOn = true;
         try {
             handlers.add(this);
+            broadcast("user #" + numberClient + " вошел в чат");
             while (isOn) {
                 String msg = inStream.readUTF();
                 broadcast(msg);
@@ -31,7 +34,6 @@ public class ChatHandler extends Thread {
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-//            broadcast(socket.getChannel().toString() + " вышел");
             handlers.remove(this);
             try {
                 outStream.close();

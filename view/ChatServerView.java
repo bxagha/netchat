@@ -21,7 +21,7 @@ public class ChatServerView extends JFrame implements Runnable {
     protected Button onOf;
 //    protected boolean isOn;
 
-    public ChatServerView(String title) {
+    public ChatServerView(String title, ChatServer cs) {
         super(title);
         setSize(300, 200);
         setLocation(20, 20);
@@ -43,14 +43,22 @@ public class ChatServerView extends JFrame implements Runnable {
         onOf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(ChatServer.isOnOf()){
-                    ChatServer.setOnOf(false);
+                if(cs.isOnOf()){
+                    try {
+                        cs.serverOf();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                     onOf.setBackground(Color.GREEN);
                     onOf.setLabel("Включить");
                     infoServerStatus.setText("Сервер выключен");
                     infoServerStatus.setBackground(Color.pink);
                 }else {
-                    ChatServer.setOnOf(true);
+                    try {
+                        cs.serverOn();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                     onOf.setBackground(Color.pink);
                     onOf.setLabel("Выключить");
                     infoServerStatus.setText("Сервер работает");
